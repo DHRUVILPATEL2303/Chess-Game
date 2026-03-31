@@ -4,11 +4,17 @@ A modern, real-time multiplayer chess platform that brings players together. The
 
 ---
 
-## 📸 Overview
+##  Overview
 
 The DPKV Chess experience allows users to create custom game rooms and invite friends by sharing a unique `Room ID`. The game is fully real-time and updates instantly on both devices using an efficient WebSocket connection.
 
-### ✨ Key Features
+
+
+https://github.com/user-attachments/assets/8d601196-680a-4ee9-bb8b-8de750f44183
+
+
+###  Key Features
+
 
 - **Real-Time Multiplayer**: Instantly syncs moves across devices with virtually zero latency using WebSockets.
 - **Room-Based Matchmaking**: Easily create a room and share the 6-character room code, or join an existing room seamlessly.
@@ -30,11 +36,11 @@ The DPKV Chess experience allows users to create custom game rooms and invite fr
 ### Backend (Go)
 - **Language**: Go (Golang)
 - **Architecture**: Custom WebSocket Hub-and-Spoke pattern
-- **Deployment**: Configured for deployment on [Fly.io](https://fly.io/) (via `fly.toml` & Dockerfile)
+
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 Follow these instructions to run both the backend server and the Android client locally.
 
