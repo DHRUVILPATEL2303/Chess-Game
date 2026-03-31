@@ -196,8 +196,8 @@ func (h *Hub) handleMessage(c *Client, msg InboundMessage) {
 					return
 				}
 
-				// Calculate best move for bot (depth 3)
-				bestMove := getBestMove(&room.Board, 3)
+				// Calculate best move for bot (depth 4)
+				bestMove := getBestMove(&room.Board, 4)
 
 				// Apply move
 				result := room.Board.ApplyMove(sqToAlg(bestMove.From), sqToAlg(bestMove.To), bestMove.Promo)
