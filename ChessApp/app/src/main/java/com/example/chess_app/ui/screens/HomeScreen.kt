@@ -101,6 +101,24 @@ fun HomeScreen(
                 }
             }
 
+            Button(
+                onClick = { vm.createBotRoom() },
+                enabled = !state.isLoading,
+                colors = ButtonDefaults.buttonColors(containerColor = SurfaceVariant, contentColor = AccentGoldLight),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        color = AccentGoldLight,
+                        strokeWidth = 2.5.dp
+                    )
+                } else {
+                    Text("Play vs Computer", fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 HorizontalDivider(modifier = Modifier.weight(1f), color = OnSurfaceVariant)
                 Text("  OR  ", color = OnSurfaceVariant, fontSize = 13.sp)

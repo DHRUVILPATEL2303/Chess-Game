@@ -21,11 +21,12 @@ func generateRoomID() string {
 }
 
 type Room struct {
-	ID      string
-	Players [2]*Client
-	Board   Board
-	mu      sync.Mutex
-	Done    bool
+	ID        string
+	Players   [2]*Client
+	Board     Board
+	mu        sync.Mutex
+	Done      bool
+	IsBotRoom bool
 }
 
 func newRoom() *Room {
@@ -56,6 +57,9 @@ func (r *Room) addPlayer(c *Client) bool {
 func (r *Room) isFull() bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if r.IsBotRoom {
+		return r.Players[0] != nil
+	}
 	return r.Players[0] != nil && r.Players[1] != nil
 }
 

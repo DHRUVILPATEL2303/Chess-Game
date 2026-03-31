@@ -65,6 +65,12 @@ class HomeViewModel : ViewModel() {
         ChessWebSocketClient.sendCreateRoom()
     }
 
+    fun createBotRoom() {
+        _uiState.value = HomeUiState(isLoading = true)
+        ensureConnected()
+        ChessWebSocketClient.sendCreateBotRoom()
+    }
+
     fun joinRoom(roomId: String) {
         if (roomId.isBlank()) {
             _uiState.value = HomeUiState(error = "Please enter a room ID")

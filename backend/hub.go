@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -44,21 +45,39 @@ func (h *Hub) Run() {
 func (h *Hub) handleMessage(c *Client, msg InboundMessage) {
 	switch msg.Type {
 
-	case MsgCreateRoom:
+	case MsgCreateRoom, "create_bot_room":
 		room := newRoom()
+		if msg.Type == "create_bot_room" {
+			room.IsBotRoom = true
+		}
 		room.addPlayer(c)
 		h.mu.Lock()
 		h.rooms[room.ID] = room
 		h.mu.Unlock()
 
-		c.SendMsg(OutboundMessage{
-			Type: MsgRoomCreated,
-			Payload: RoomCreatedPayload{
-				RoomID: room.ID,
-				Color:  "white",
-			},
-		})
-		log.Printf("[room %s] created by white", room.ID)
+		if room.IsBotRoom {
+			c.SendMsg(OutboundMessage{
+				Type: MsgRoomJoined,
+				Payload: RoomJoinedPayload{Color: "white"},
+			})
+			startPayload := GameStartedPayload{
+				Board: room.Board.Squares, Turn: room.Board.Turn,
+				White: "Player", Black: "Computer",
+			}
+			room.broadcast(OutboundMessage{
+				Type: MsgGameStarted, Payload: startPayload,
+			})
+			log.Printf("[room %s] bot game started", room.ID)
+		} else {
+			c.SendMsg(OutboundMessage{
+				Type: MsgRoomCreated,
+				Payload: RoomCreatedPayload{
+					RoomID: room.ID,
+					Color:  "white",
+				},
+			})
+			log.Printf("[room %s] created by white", room.ID)
+		}
 
 	case MsgJoinRoom:
 		h.mu.RLock()
@@ -165,6 +184,68 @@ func (h *Hub) handleMessage(c *Client, msg InboundMessage) {
 				},
 			})
 			log.Printf("[room %s] stalemate – draw", room.ID)
+		} else if room.IsBotRoom && room.Board.Turn == "black" {
+			go func() {
+				// Artificial delay
+				time.Sleep(500 * time.Millisecond)
+
+				room.mu.Lock()
+				// Re-verify it's still black's turn and game isn't over
+				if room.Done || room.Board.Turn != "black" {
+					room.mu.Unlock()
+					return
+				}
+
+				// Calculate best move for bot (depth 3)
+				bestMove := getBestMove(&room.Board, 3)
+
+				// Apply move
+				result := room.Board.ApplyMove(sqToAlg(bestMove.From), sqToAlg(bestMove.To), bestMove.Promo)
+				if !result.Valid {
+					log.Printf("[Bot Error] Invalid move generated: %v to %v", sqToAlg(bestMove.From), sqToAlg(bestMove.To))
+					room.mu.Unlock()
+					return
+				}
+				room.Board = result.Board
+				
+				statePayload := GameStatePayload{
+					Board:         room.Board.Squares,
+					Turn:          room.Board.Turn,
+					LastMove:      &LastMove{From: sqToAlg(bestMove.From), To: sqToAlg(bestMove.To)},
+					IsCheck:       result.IsCheck,
+					CapturedWhite: room.Board.CapturedByWhite,
+					CapturedBlack: room.Board.CapturedByBlack,
+				}
+				room.mu.Unlock()
+
+				room.broadcast(OutboundMessage{
+					Type:    MsgGameState,
+					Payload: statePayload,
+				})
+
+				// Check terminal states after bot move
+				if result.IsCheckmate {
+					room.Done = true
+					room.broadcast(OutboundMessage{
+						Type: MsgGameOver,
+						Payload: GameOverPayload{
+							Result: "checkmate",
+							Winner: "black",
+						},
+					})
+					log.Printf("[room %s] checkmate – black wins", room.ID)
+				} else if result.IsStalemate {
+					room.Done = true
+					room.broadcast(OutboundMessage{
+						Type: MsgGameOver,
+						Payload: GameOverPayload{
+							Result: "stalemate",
+							Winner: "",
+						},
+					})
+					log.Printf("[room %s] stalemate – draw", room.ID)
+				}
+			}()
 		}
 
 	case MsgResign:

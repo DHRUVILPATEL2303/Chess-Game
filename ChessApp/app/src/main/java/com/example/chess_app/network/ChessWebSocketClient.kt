@@ -50,6 +50,8 @@ object ChessWebSocketClient {
 
     fun sendCreateRoom() = send(mapOf("type" to ClientMsgType.CREATE_ROOM))
 
+    fun sendCreateBotRoom() = send(mapOf("type" to ClientMsgType.CREATE_BOT_ROOM))
+
     fun sendJoinRoom(roomId: String) = send(
         mapOf("type" to ClientMsgType.JOIN_ROOM, "room_id" to roomId)
     )

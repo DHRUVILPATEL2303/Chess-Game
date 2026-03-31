@@ -69,8 +69,9 @@ object ServerMsgType {
 }
 
 object ClientMsgType {
-    const val CREATE_ROOM = "create_room"
-    const val JOIN_ROOM   = "join_room"
+    const val CREATE_ROOM   = "create_room"
+    const val CREATE_BOT_ROOM = "create_bot_room"
+    const val JOIN_ROOM     = "join_room"
     const val MAKE_MOVE   = "make_move"
     const val RESIGN      = "resign"
 }
