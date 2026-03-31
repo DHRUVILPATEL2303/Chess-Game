@@ -1,6 +1,7 @@
 package com.example.chess_app.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.chess_app.R
 import com.example.chess_app.ui.theme.*
 import com.example.chess_app.viewmodel.HomeNavEvent
 import com.example.chess_app.viewmodel.HomeViewModel
@@ -46,6 +49,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+//            .windowInsetsPadding(WindowInsets.safeDrawing)
             .background(
                 Brush.verticalGradient(listOf(BackgroundDark, SurfaceVariant))
             ),
@@ -56,8 +60,16 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier.padding(horizontal = 32.dp)
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.app_logo),
+                contentDescription = "App Logo",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(RoundedCornerShape(24.dp))
+            )
+
             Text(
-                text = "♟ Chess",
+                text = "Chess",
                 fontSize = 52.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = AccentGold

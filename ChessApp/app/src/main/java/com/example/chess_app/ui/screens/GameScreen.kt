@@ -96,66 +96,73 @@ fun GameScreen(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundDark)
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+//            .windowInsetsPadding(WindowInsets.safeDrawing)
+                .background(BackgroundDark)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
 
-            PlayerBar(
-                label = "Opponent",
-                color = if (myColor == "white") "black" else "white",
-                capturedPieces = state.capturedByOpponent,
-                isActive = state.turn != myColor && !state.isWaiting,
-                modifier = Modifier.fillMaxWidth()
-            )
+                PlayerBar(
+                    label = "Opponent",
+                    color = if (myColor == "white") "black" else "white",
+                    capturedPieces = state.capturedByOpponent,
+                    isActive = state.turn != myColor && !state.isWaiting,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            AnimatedStatusBanner(message = state.statusMessage, isCheck = state.isCheck)
+                AnimatedStatusBanner(message = state.statusMessage, isCheck = state.isCheck)
 
-            ChessBoard(
-                board = state.board,
-                myColor = myColor,
-                selectedSquare = state.selectedSquare,
-                legalMoves = state.legalMoves,
-                lastMoveFrom = state.lastMoveFrom,
-                lastMoveTo = state.lastMoveTo,
-                checkSquare = checkSquare,
-                onSquareTap = { sq -> vm.onSquareTapped(sq) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
-            )
+                ChessBoard(
+                    board = state.board,
+                    myColor = myColor,
+                    selectedSquare = state.selectedSquare,
+                    legalMoves = state.legalMoves,
+                    lastMoveFrom = state.lastMoveFrom,
+                    lastMoveTo = state.lastMoveTo,
+                    checkSquare = checkSquare,
+                    onSquareTap = { sq -> vm.onSquareTapped(sq) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp)
+                )
 
-            PlayerBar(
-                label = "You (${myColor.replaceFirstChar { it.uppercase() }})",
-                color = myColor,
-                capturedPieces = state.capturedByMe,
-                isActive = state.turn == myColor && !state.isWaiting,
-                modifier = Modifier.fillMaxWidth()
-            )
+                PlayerBar(
+                    label = "You (${myColor.replaceFirstChar { it.uppercase() }})",
+                    color = myColor,
+                    capturedPieces = state.capturedByMe,
+                    isActive = state.turn == myColor && !state.isWaiting,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
-            if (!state.isGameOver && !state.isWaiting) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    OutlinedButton(
-                        onClick = { showResignDialog = true },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = ErrorRed),
-                        border = BorderStroke(1.dp, ErrorRed),
-                        shape = RoundedCornerShape(10.dp)
+                if (!state.isGameOver && !state.isWaiting) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Icon(Icons.Default.SportsEsports, null, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text("Resign")
+                        OutlinedButton(
+                            onClick = { showResignDialog = true },
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = ErrorRed),
+                            border = BorderStroke(1.dp, ErrorRed),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Icon(Icons.Default.SportsEsports, null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("Resign")
+                        }
                     }
                 }
             }
         }
     }
+
+
 }
 
 @Composable
