@@ -21,7 +21,7 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("Chess WebSocket server listening on :%s", port)
+	log.Printf("Chess WebSocket server webhook listening on :%s", port)
 	log.Printf("WebSocket endpoint: ws://0.0.0.0:%s/ws", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatalf("server error: %v", err)
